@@ -1,7 +1,7 @@
 """
 To generate a migration, make changes to this model file and then run:
 
-django-admin.py schemamigration queue [migration_name] --auto --settings=xqueue.settings --pythonpath=.
+django-admin.py schemamigration lt_queue [migration_name] --auto --settings=xqueue.settings --pythonpath=.
 
 """
 import json
@@ -23,18 +23,18 @@ class SubmissionManager(models.Manager):
 
     def get_queue_length(self, queue_name):
         """
-        How many unretired submissions are available for a queue
+        How many unretired submissions are available for a lt_queue
         """
         return self.time_filter('pull_time').filter(queue_name=queue_name, retired=False).count()
 
     def get_single_unretired_submission(self, queue_name):
         '''
-        Retrieve a single unretired queued item, if one exists, for the named queue
+        Retrieve a single unretired queued item, if one exists, for the named lt_queue
 
         Returns (success, submission):
             success:    Flag whether retrieval is successful (Boolean)
-                        If no unretired item in the queue, return False
-            submission: A single submission from the queue, guaranteed to be unretired
+                        If no unretired item in the lt_queue, return False
+            submission: A single submission from the lt_queue, guaranteed to be unretired
         '''
 
         submission = self.time_filter('pull_time').filter(
@@ -121,7 +121,7 @@ class Submission(models.Model):
     objects = SubmissionManager()
 
     def __unicode__(self):
-        submission_info  = "Submission from %s for queue '%s':\n" % (self.requester_id, self.queue_name)
+        submission_info  = "Submission from %s for lt_queue '%s':\n" % (self.requester_id, self.queue_name)
         submission_info += "    Callback URL: %s\n" % self.lms_callback_url
         submission_info += "    Arrival time: %s\n" % self.arrival_time
         submission_info += "    Pull time:    %s\n" % self.pull_time

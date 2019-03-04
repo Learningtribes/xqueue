@@ -1,9 +1,9 @@
 import json
 import logging
 import os.path
-from queue.models import CHARFIELD_LEN_LARGE, Submission
-from queue.util import get_request_ip, make_hashkey
-from queue.views import compose_reply
+from lt_queue.models import CHARFIELD_LEN_LARGE, Submission
+from lt_queue.util import get_request_ip, make_hashkey
+from lt_queue.views import compose_reply
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -31,7 +31,7 @@ def submit(request):
         (request_is_valid, lms_callback_url, queue_name, xqueue_header, xqueue_body) = _is_valid_request(request.POST)
 
         if not request_is_valid:
-            log.error("Invalid queue submission from LMS: lms ip: {0}, request.POST: {1}".format(
+            log.error("Invalid lt_queue submission from LMS: lms ip: {0}, request.POST: {1}".format(
                 get_request_ip(request),
                 request.POST,
             ))
@@ -75,7 +75,7 @@ def submit(request):
                                         s3_urls=urls_json,
                                         s3_keys=keys_json)
                 submission.save()
-                transaction.commit()  # Explicit commit to DB before inserting submission.id into queue
+                transaction.commit()  # Explicit commit to DB before inserting submission.id into lt_queue
 
                 qcount = Submission.objects.get_queue_length(queue_name)
 
@@ -104,7 +104,7 @@ def _is_valid_request(xrequest):
     Returns:
         is_valid:         Flag indicating success (Boolean)
         lms_callback_url: Full URL to which queued results should be delivered (string)
-        queue_name:       Name of intended queue (string)
+        queue_name:       Name of intended lt_queue (string)
         header:           Header portion of xrequest (string)
         body:             Body portion of xrequest (string)
     '''

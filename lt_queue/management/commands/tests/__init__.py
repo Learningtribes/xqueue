@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from queue.models import Submission
+from lt_queue.models import Submission
 
 import pytz
 

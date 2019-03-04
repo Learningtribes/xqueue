@@ -27,7 +27,7 @@ class MatlabGraderTest(TransactionTestCase):
     You can specify these in test_env.json (see test_settings.py for details)
     If the required settings cannot be loaded, the test will fail."""
 
-    # Choose a unique queue name to prevent conflicts in Jenkins
+    # Choose a unique lt_queue name to prevent conflicts in Jenkins
     QUEUE_NAME = 'matlab_%s' % uuid4().hex
 
     def setUp(self):
@@ -54,7 +54,7 @@ class MatlabGraderTest(TransactionTestCase):
         XQueueTestClient.create_user('test', 'test@edx.org', 'password')
         self.client.login(username='test', password='password')
 
-        # Start up workers to pull messages from the queue
+        # Start up workers to pull messages from the lt_queue
         # and forward them to our grader
         PassiveGraderStub.start_workers_for_grader_url(MatlabGraderTest.QUEUE_NAME,
                                                        self.grader_url)
@@ -139,7 +139,7 @@ class MatlabGraderTest(TransactionTestCase):
         payload = "%%api_key=%s\n%%%%\n%s\n" % (self.api_key, matlab_code)
 
         # Tell the xqueue to forward messages to the mathworks grader
-        # using our unique queue name
+        # using our unique lt_queue name
         xqueue_settings = {MatlabGraderTest.QUEUE_NAME: self.grader_url}
         with override_settings(XQUEUES=xqueue_settings):
 

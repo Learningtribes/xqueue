@@ -1,4 +1,4 @@
-from queue.models import Submission
+from lt_queue.models import Submission
 
 from django.core.management import call_command
 from django.test import TestCase
@@ -70,16 +70,16 @@ class CountQueuedSubmissionsTest(TestCase):
                 self.assertEquals(kwargs,
                                   {'Namespace': u'xqueue/dev-stack',
                                    'MetricData': [
-                                       {u'Dimensions': [{u'Name': u'queue', u'Value': u'test2'}],
+                                       {u'Dimensions': [{u'Name': u'lt_queue', u'Value': u'test2'}],
                                         u'Value': 2,
                                         u'MetricName': u'queue_length'
                                         },
-                                       {u'Dimensions': [{u'Name': u'queue', u'Value': u'test-pull'}],
+                                       {u'Dimensions': [{u'Name': u'lt_queue', u'Value': u'test-pull'}],
                                         u'Value': 1,
                                         u'MetricName': u'queue_length'}]})
             if 'put_metric_alarm' in name:
                 metric_alarm_kwargs.append(kwargs)
 
         self.assertEquals(len(metric_alarm_kwargs), 2)
-        self.assertEquals(metric_alarm_kwargs[0]['AlarmName'], u'dev-stack test2 queue length over threshold')
-        self.assertEquals(metric_alarm_kwargs[1]['AlarmName'], u'dev-stack test-pull queue length over threshold')
+        self.assertEquals(metric_alarm_kwargs[0]['AlarmName'], u'dev-stack test2 lt_queue length over threshold')
+        self.assertEquals(metric_alarm_kwargs[1]['AlarmName'], u'dev-stack test-pull lt_queue length over threshold')

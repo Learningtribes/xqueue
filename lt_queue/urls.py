@@ -1,6 +1,6 @@
-from queue.ext_interface import get_queuelen, get_submission, put_result
-from queue.lms_interface import submit
-from queue.views import log_in, log_out, status
+from lt_queue.ext_interface import get_queuelen, get_submission, put_result
+from lt_queue.lms_interface import submit
+from lt_queue.views import log_in, log_out, status
 
 from django.conf.urls import url
 
@@ -12,7 +12,7 @@ urlpatterns = [
     url(r'^status/$', status),
 ]
 
-# LMS-facing interface for queue requests
+# LMS-facing interface for lt_queue requests
 # ------------------------------------------------------------
 urlpatterns += [
     url(r'^submit/$', submit),

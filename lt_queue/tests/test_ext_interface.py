@@ -1,8 +1,8 @@
 import json
 import shutil
-from queue import ext_interface
-from queue.models import Submission
-from queue.util import make_hashkey
+from lt_queue import ext_interface
+from lt_queue.models import Submission
+from lt_queue.util import make_hashkey
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -33,7 +33,7 @@ class TestExtInterface(TransactionTestCase):
     # get_queuelen
     def test_queue_length_invalid_queue_name(self):
         """
-        An invalid queue but a login will tell you all the valid queues
+        An invalid lt_queue but a login will tell you all the valid queues
         """
         client = Client()
         client.login(**self.credentials)
@@ -41,11 +41,11 @@ class TestExtInterface(TransactionTestCase):
         assert response.status_code == 200
         error, message = parse_xreply(response.content)
         assert error
-        assert u'Valid queue names are: ' in message
+        assert u'Valid lt_queue names are: ' in message
 
     def test_queue_length_missing_queue_name(self):
         """
-        Confirm the error message when you don't specify a queue name for the length
+        Confirm the error message when you don't specify a lt_queue name for the length
         """
         client = Client()
         client.login(**self.credentials)
@@ -58,7 +58,7 @@ class TestExtInterface(TransactionTestCase):
     # get_submission
     def test_get_submission_no_queue(self):
         """
-        Confirm the error message when you don't specify a queue name but ask for a submission
+        Confirm the error message when you don't specify a lt_queue name but ask for a submission
         """
         client = Client()
         client.login(**self.credentials)
@@ -70,7 +70,7 @@ class TestExtInterface(TransactionTestCase):
 
     def test_get_submission_invalid_queue(self):
         """
-        Confirm the error message when you try to get a submission for an invalid queue
+        Confirm the error message when you try to get a submission for an invalid lt_queue
         """
         client = Client()
         client.login(**self.credentials)
@@ -82,19 +82,19 @@ class TestExtInterface(TransactionTestCase):
 
     def test_get_submission_empty(self):
         """
-        Confirm the message (non-error) when your queue is empty
+        Confirm the message (non-error) when your lt_queue is empty
         """
         client = Client()
         client.login(**self.credentials)
         response = client.get('/xqueue/get_submission/', {u'queue_name': u'tmp'})
         self.assertEqual(response.status_code, 200)
         (error, msg) = parse_xreply(response.content)
-        self.assertEqual(error, 1)  # queue empty but exists still comes with a False code
+        self.assertEqual(error, 1)  # lt_queue empty but exists still comes with a False code
         self.assertEqual(msg, "Queue 'tmp' is empty")
 
     def test_get_submission(self):
         """
-        Retrieve a single submission for the queue
+        Retrieve a single submission for the lt_queue
         """
         body = json.dumps({"test": "test"})
         Submission.objects.create(queue_name='tmp',
@@ -208,7 +208,7 @@ class TestExtInterface(TransactionTestCase):
         self.assertEqual(error, 1)  # failure
         self.assertEqual(msg, 'Submission does not exist')
 
-    @patch('queue.consumer.post_grade_to_lms', return_value=False)
+    @patch('lt_queue.consumer.post_grade_to_lms', return_value=False)
     @override_settings(SUBMISSION_PROCESSING_DELAY=0)
     def test_put_result_with_lms_failures(self, mock_post_grade_to_lms):
         """

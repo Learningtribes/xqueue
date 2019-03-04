@@ -3,7 +3,7 @@ import json
 import logging
 import multiprocessing
 import time
-from queue.models import Submission
+from lt_queue.models import Submission
 
 import requests
 from django.conf import settings
@@ -98,7 +98,7 @@ def _http_post(url, data, timeout):
 
 
 class Worker(multiprocessing.Process):
-    """Encapsulation of a single database montitor that listens on a queue
+    """Encapsulation of a single database montitor that listens on a lt_queue
     """
     def __init__(self, queue_name, worker_url):
         super(Worker, self).__init__()
@@ -107,7 +107,7 @@ class Worker(multiprocessing.Process):
         self.worker_url = worker_url
 
     def run(self):
-        log.info("Starting consumer for queue {queue}".format(queue=self.queue_name))
+        log.info("Starting consumer for lt_queue {queue}".format(queue=self.queue_name))
 
         if newrelic:
             deliver_submission_task = newrelic.agent.BackgroundTaskWrapper(self._deliver_submission)
@@ -120,7 +120,7 @@ class Worker(multiprocessing.Process):
             # Wait the given seconds between checking the database
             time.sleep(settings.CONSUMER_DELAY)
 
-        log.info("Consumer for queue {queue} stopped".format(queue=self.queue_name))
+        log.info("Consumer for lt_queue {queue} stopped".format(queue=self.queue_name))
 
     def _deliver_submission(self):
         """

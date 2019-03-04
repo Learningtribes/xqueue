@@ -1,5 +1,5 @@
-from queue.consumer import Worker
-from queue.management.commands.run_consumer import Command
+from lt_queue.consumer import Worker
+from lt_queue.management.commands.run_consumer import Command
 
 from django.core.management import call_command
 from django.test import TestCase, override_settings
@@ -17,7 +17,7 @@ class RunConsumer(TestCase):
         call_command('run_consumer')
 
     @patch.object(Worker, 'run')
-    @patch('queue.management.commands.run_consumer.MONITOR_SLEEPTIME', 0)
+    @patch('lt_queue.management.commands.run_consumer.MONITOR_SLEEPTIME', 0)
     def test_stop_workers(self, mock_worker):
         """
         Having a Worker() with a zero exitcode tells monitor

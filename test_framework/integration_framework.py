@@ -13,9 +13,9 @@ inputs specified by XQueueTestClient.
 
 How messages get routed (PassiveGraderStub):
 
-The test client sends messages to a particular queue.
+The test client sends messages to a particular lt_queue.
 
-XQueue checks its settings and finds that the queue has
+XQueue checks its settings and finds that the lt_queue has
 a URL associated with it.  XQueue forwards the message to that URL.
 
 PassiveGraderStub is listening at the URL and receives a POST request
@@ -27,7 +27,7 @@ the callback_url provided by the test client.
 
 How messages get routed (ActiveGraderStub):
 
-The test client sends messages to a particular queue.
+The test client sends messages to a particular lt_queue.
 
 The ActiveGraderStub polls the XQueue using a REST-like interface.
 When it receives a submission, it pushes a response back to XQueue
@@ -51,7 +51,7 @@ import datetime
 import time
 import json
 from abc import ABCMeta, abstractmethod
-from queue.consumer import Worker
+from lt_queue.consumer import Worker
 import urlparse
 import threading
 from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
@@ -185,13 +185,13 @@ class PassiveGraderStub(ForkingMixIn, HTTPServer, GraderStubBase):
     def start_workers_for_grader_url(cls, queue_name,
                                      destination_url, num_workers=1):
         """We need to start workers (consumers) to pull messages
-        from the queue and pass them to our passive grader.
+        from the lt_queue and pass them to our passive grader.
 
-        `queue_name`: The name of the queue to pull messages from (string)
+        `queue_name`: The name of the lt_queue to pull messages from (string)
 
         `destination_url`: The url to forward responses to.
 
-        `num_workers`: The number of workers to start for this queue (int)
+        `num_workers`: The number of workers to start for this lt_queue (int)
 
         Raises an `AssertionError` if trying to start workers before
         stopping the current workers."""
@@ -239,9 +239,9 @@ class PassiveGraderStub(ForkingMixIn, HTTPServer, GraderStubBase):
         """Start workers that will forward submissions
         to the port the grader stub is listening on
 
-        `queue_name`: The name of the queue to pull messages from (string)
+        `queue_name`: The name of the lt_queue to pull messages from (string)
 
-        `num_workers`: The number of workers to start for this queue (int)
+        `num_workers`: The number of workers to start for this lt_queue (int)
 
         Raises an `AssertionError` if trying to start workers before
         stopping the current workers."""
@@ -269,8 +269,8 @@ class ActiveGraderStub(GraderStubBase):
     def __init__(self, queue_name):
         """Start polling the Xqueue for new submissions"""
 
-        # Store the queue name, so we know
-        # which queue to poll
+        # Store the lt_queue name, so we know
+        # which lt_queue to poll
         self._queue_name = queue_name
 
         # Create a logged-in Django test client
@@ -333,7 +333,7 @@ class ActiveGraderStub(GraderStubBase):
         returns None."""
 
         # Use the Django test client to retrieve a submission
-        # from our queue
+        # from our lt_queue
         response = self._client.get('/xqueue/get_submission/',
                                     {'queue_name': self._queue_name})
 
@@ -362,7 +362,7 @@ class ActiveGraderStub(GraderStubBase):
                         'xqueue_body': xqueue_body}
 
             # Otherwise, we could not retrieve the submission,
-            # usually because the queue is empty.
+            # usually because the lt_queue is empty.
             else:
                 return None
 
@@ -606,8 +606,8 @@ class XQueueTestClient(Client):
                       student_response=""):
         """Create a valid xqueue request.
 
-        `queuename`: The name of the queue to send the request to.
-            This should be the same queue that workers are pulling messages
+        `queuename`: The name of the lt_queue to send the request to.
+            This should be the same lt_queue that workers are pulling messages
             from (string)
 
         `grader_payload`: Information to pass to the grader service (dict)

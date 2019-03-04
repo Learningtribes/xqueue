@@ -1,6 +1,6 @@
 import logging
 import time
-from queue.consumer import Worker
+from lt_queue.consumer import Worker
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -18,12 +18,12 @@ class Command(BaseCommand):
     """
 
     def handle(self, *args, **options):
-        log.info(' [*] Starting queue workers...')
+        log.info(' [*] Starting lt_queue workers...')
 
         workers = []
         queues = settings.XQUEUES.items()
 
-        # Assigned one worker for queue
+        # Assigned one worker for lt_queue
         for name, url in queues:
             if url is not None:
                 worker = Worker(queue_name=name, worker_url=url)

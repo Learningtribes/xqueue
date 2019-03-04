@@ -1,9 +1,9 @@
 import json
 import logging
-import queue.consumer
-from queue.models import Submission
-from queue.util import get_request_ip, make_hashkey
-from queue.views import compose_reply
+import lt_queue.consumer
+from lt_queue.models import Submission
+from lt_queue.util import get_request_ip, make_hashkey
+from lt_queue.views import compose_reply
 
 import requests
 from django.conf import settings
@@ -25,8 +25,8 @@ log = logging.getLogger(__name__)
 @login_required
 def get_queuelen(request):
     '''
-    Retrieves the length of queue named by GET['queue_name'].
-    If queue_name is invalid or null, returns list of all queue names
+    Retrieves the length of lt_queue named by GET['queue_name'].
+    If queue_name is invalid or null, returns list of all lt_queue names
     '''
     try:
         queue_name = request.GET['queue_name']
@@ -37,13 +37,13 @@ def get_queuelen(request):
         job_count = Submission.objects.get_queue_length(queue_name)
         return HttpResponse(compose_reply(True, job_count))
     else:
-        return HttpResponse(compose_reply(False, 'Valid queue names are: ' + ', '.join(settings.XQUEUES.keys())))
+        return HttpResponse(compose_reply(False, 'Valid lt_queue names are: ' + ', '.join(settings.XQUEUES.keys())))
 
 
 @login_required
 def get_submission(request):
     '''
-    Retrieve a single submission from queue named by GET['queue_name'].
+    Retrieve a single submission from lt_queue named by GET['queue_name'].
     '''
     try:
         queue_name = request.GET['queue_name']
@@ -53,7 +53,7 @@ def get_submission(request):
     if queue_name not in settings.XQUEUES:
         return HttpResponse(compose_reply(False, "Queue '%s' not found" % queue_name))
     else:
-        # Try to pull a single item from named queue
+        # Try to pull a single item from named lt_queue
         (got_submission, submission) = Submission.objects.get_single_unretired_submission(queue_name)
 
         if not got_submission:
@@ -146,7 +146,7 @@ def put_result(request):
             submission.grader_reply = grader_reply
 
             # Deliver grading results to LMS
-            success = queue.consumer.post_grade_to_lms(submission.xqueue_header, grader_reply)
+            success = lt_queue.consumer.post_grade_to_lms(submission.xqueue_header, grader_reply)
             submission.lms_ack = success
 
             # Keep track of how many times we've failed to return a grade for this submission

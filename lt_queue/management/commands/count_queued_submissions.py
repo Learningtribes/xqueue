@@ -5,7 +5,7 @@ Check on currently queued submissions
 from __future__ import unicode_literals
 
 from itertools import izip_longest
-from queue.models import Submission
+from lt_queue.models import Submission
 
 import backoff
 import boto3
@@ -22,7 +22,7 @@ except ImportError:  # pragma: no cover
 
 class Command(BaseCommand):
     """
-    Count submissions per-queue that have not been retired
+    Count submissions per-lt_queue that have not been retired
     """
 
     def add_arguments(self, parser):
@@ -94,7 +94,7 @@ class Command(BaseCommand):
         cloudwatch = CwBotoWrapper()
         cloudwatch_configuration = settings.CLOUDWATCH_QUEUE_COUNT_METRICS
         metric_name = 'queue_length'
-        dimension = 'queue'
+        dimension = 'lt_queue'
         environment = cloudwatch_configuration['environment']
         deployment = cloudwatch_configuration['deployment']
         namespace = "xqueue/{}-{}".format(environment,
@@ -130,7 +130,7 @@ class Command(BaseCommand):
                 treat_missing_data = "notBreaching"
                 statistic = "Maximum"
                 actions = cloudwatch_configuration['sns_arns']
-                alarm_name = "{}-{} {} queue length over threshold".format(environment,
+                alarm_name = "{}-{} {} lt_queue length over threshold".format(environment,
                                                                            deployment,
                                                                            queue['queue_name'])
 

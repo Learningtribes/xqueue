@@ -5,7 +5,7 @@ Remove old submissions after they were lost or returned to the LMS
 import logging
 import time
 from datetime import datetime, timedelta
-from queue.models import Submission
+from lt_queue.models import Submission
 
 import pytz
 from django.core.management.base import BaseCommand, CommandError

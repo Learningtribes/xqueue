@@ -115,7 +115,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
-    'queue',
+    'lt_queue',
     'release_util',
     'storages',
 )
@@ -129,7 +129,7 @@ LOGGING = get_logger_config(
     debug=True)
 
 # How many minutes to ignore pulled or pushed submissions when a client connects
-# for a given queue, since another client/worker may have pulled the submission
+# for a given lt_queue, since another client/worker may have pulled the submission
 # and be processing it.
 SUBMISSION_PROCESSING_DELAY = 1
 
@@ -152,8 +152,8 @@ USERS = None
 # If you use count_queue_submissions to submit data to AWS CloudWatch you'll need to
 # provide some information for how to construct the metrics and alarms.
 # It will store metrics in a namespace of xqueue/environment-deployment and create an alarm
-# for each queue with an alarm on the default_threshold.  If you want a different threshold
-# for a given queue, thresholds has a dictionary of "queue name" : "custom limit".
+# for each lt_queue with an alarm on the default_threshold.  If you want a different threshold
+# for a given lt_queue, thresholds has a dictionary of "lt_queue name" : "custom limit".
 # All thresholds share the sns_arns list.
 CLOUDWATCH_QUEUE_COUNT_METRICS = {
     'environment': 'dev',

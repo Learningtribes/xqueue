@@ -1,7 +1,7 @@
 import logging
 from optparse import make_option
-from queue.consumer import post_failure_to_lms
-from queue.models import Submission
+from lt_queue.consumer import post_failure_to_lms
+from lt_queue.models import Submission
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -12,8 +12,8 @@ log = logging.getLogger(__name__)
 class Command(BaseCommand):
     help = """
            Retire submissions that have more than settings.MAX_NUMBER_OF_FAILURES failures.\
-           Notify the LMS/student that the queue will no longer attempt to process the submission.\
-           Optional <queue_name> - no queue name provided means all queues will be processed.
+           Notify the LMS/student that the lt_queue will no longer attempt to process the submission.\
+           Optional <queue_name> - no lt_queue name provided means all queues will be processed.
            """
 
     def add_arguments(self, parser):
@@ -47,7 +47,7 @@ class Command(BaseCommand):
     def retire_submissions(self, failed_submissions, force):
         for failed_submission in failed_submissions:
             if failed_submission.num_failures >= settings.MAX_NUMBER_OF_FAILURES:
-                log.info(" [ ] Retiring submission id=%d from queue '%s' with num_failures=%d" %
+                log.info(" [ ] Retiring submission id=%d from lt_queue '%s' with num_failures=%d" %
                          (failed_submission.id, failed_submission.queue_name, failed_submission.num_failures))
                 if force:
                     failed_submission.retired = True  # Mark as done without contacting LMS

@@ -1,5 +1,5 @@
-from queue.management.commands.tests import bulk_create_submissions
-from queue.models import Submission
+from lt_queue.management.commands.tests import bulk_create_submissions
+from lt_queue.models import Submission
 
 from django.core.management import call_command
 from django.core.management.base import CommandError
